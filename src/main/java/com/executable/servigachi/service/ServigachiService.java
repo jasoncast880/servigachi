@@ -13,24 +13,29 @@ import com.executable.servigachi.repository.*;
 public class ServigachiService {
 	private final SoundFileRepository repo;
 	
-	public ServigachiService(SoundFileRepository repo){
+	public ServigachiService(SoundFileRepository repo) {
 		this.repo = repo;
 	}
 
-	public Optional<SoundFile> getFileById(Long id){
+	public Optional<SoundFile> getFileById(Long id) {
 		return repo.findById(id);
 	}
 
-	public ArrayList<SoundFile> getFileList(){
-		return new ArrayList<SoundFile>();
+	public List<SoundFile> getFileList() {
+		List<SoundFile> _fileList = repo.findAll();
+		return _fileList;
 	}
 
-	public SoundFile saveFile(SoundFile file){
+	public SoundFile updateFile(SoundFile file) {
 		return repo.save(file);
 	}
 
-	public void deleteFileById(Long id){
+	public void deleteFileById(Long id) {
 		repo.deleteById(id);
+	}
+
+	public void deleteFileList() {
+		repo.deleteAll();
 	}
 
 }

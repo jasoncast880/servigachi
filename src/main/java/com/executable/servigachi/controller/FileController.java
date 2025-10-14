@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.executable.servigachi.model.SoundFile;
-import com.executable.servigachi.repository.SoundFileRepository;
 
 import com.executable.servigachi.service.ServigachiService;
 
@@ -26,17 +25,16 @@ import com.executable.servigachi.service.ServigachiService;
 @RequestMapping("/api")
 public class FileController {
 
-	ServigachiService s;
+	public ServigachiService s;
 
-	public SoundFileRepository repo;
-	public FileController(SoundFileRepository repo) {
-		this.repo = repo;
+	public FileController(ServigachiService s) {
+		this.s = s;
 	}
 
 	@GetMapping("/")
 	ResponseEntity<List<SoundFile>> getFileList() {
 		try {
-			List<SoundFile> fileList = new ArrayList<SoundFile>();
+			List<SoundFile> fileList = s.getFileList();
 			if(fileList.isEmpty()) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -46,9 +44,9 @@ public class FileController {
 		}
 	}
 
-	@GetMapping("/id")
+	@GetMapping("/{id}")
 	ResponseEntity<SoundFile> getFileById(@PathVariable("id") long id) {
-		Optional<SoundFile> optFile = repo.findById(id);
+		Optional<SoundFile> optFile = s.getFileById(id);
 
 		if(optFile.isPresent()) {
 			return new ResponseEntity<>(optFile.get(), HttpStatus.OK);
@@ -60,7 +58,7 @@ public class FileController {
 	@PostMapping("/")
 	ResponseEntity<SoundFile> postFile(@RequestBody SoundFile file) {
 		try {
-			SoundFile _file = repo.save(new SoundFile(file.getName()));
+			SoundFile _file = s.updateFile(file);
 			return new ResponseEntity<>(_file, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -69,13 +67,13 @@ public class FileController {
 
 	@PutMapping("/{id}")
 	ResponseEntity<SoundFile> putFileById(@PathVariable("id") long id, @RequestBody SoundFile file) {
-		Optional<SoundFile> optFile = repo.findById(id);
+		Optional<SoundFile> optFile = s.getFileById(id);
 
 		if(optFile.isPresent()) {
 			SoundFile _file = optFile.get();
 			_file.setName(file.getName());
 
-			return new ResponseEntity<>(repo.save(_file), HttpStatus.OK);
+			return new ResponseEntity<>(s.updateFile(_file), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
@@ -84,7 +82,7 @@ public class FileController {
 	@DeleteMapping("/")
 	ResponseEntity<SoundFile> deleteFileList() {
 		try {
-			repo.deleteAll();
+			s.deleteFileList();
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -93,10 +91,10 @@ public class FileController {
 
 	@DeleteMapping("/{id}")
 	ResponseEntity<SoundFile> deleteFile(@PathVariable("id") long id) {
-		Optional<SoundFile> optFile = repo.findById(id);
+		Optional<SoundFile> optFile = s.getFileById(id);
 
 		if(optFile.isPresent()) {
-			repo.deleteById(id);
+		s.deleteFileById(id);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
