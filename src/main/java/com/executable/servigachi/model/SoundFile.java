@@ -12,13 +12,13 @@ public class SoundFile {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String name;
+	private String filename;
 
 	public SoundFile() {}
-	public SoundFile(String name) { this.name = name; }
+	public SoundFile(String filename) { this.filename = filename; }
 
 	public Long getId() { return id; }
 	public void setId(Long id) {  this.id = id; }
-	public String getName() { return name; }
-	public void setName(String name) { this.name = name; }
+	public String getName() { return filename; }
+	public void setName(String filename) { this.filename = filename; }
 }

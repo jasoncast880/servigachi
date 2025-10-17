@@ -1,5 +1,9 @@
 package com.executable.servigachi.controller;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.executable.servigachi.model.SoundFile;
 
@@ -52,6 +58,26 @@ public class FileController {
 			return new ResponseEntity<>(optFile.get(), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/upload")
+	ResponseEntity<SoundFile> uploadFile(@RequestParam("file") MultipartFile file) {
+		try {
+			//upload on disk
+			Path uploadDir = Paths.get("uploads");
+
+			Path filepath = uploadDir.resolve(file.getOriginalFilename());
+			
+			Files.write(filepath, file.getBytes());
+			
+			//metadata on db
+			SoundFile _file = new SoundFile(file.getOriginalFilename());
+			s.updateFile(_file);
+
+			return new ResponseEntity<>(_file, HttpStatus.OK);
+		} catch(Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
