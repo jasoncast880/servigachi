@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -82,7 +80,7 @@ public class FileController {
 	}
 
 	@PostMapping("/upload/img")
-	ResponseEntity<ImgFile> uploadImgFile(@RequestParam("file") MultipartFile file) {
+	ResponseEntity<ImageFile> uploadImageFile(@RequestParam("file") MultipartFile file) {
 		try {
 			Path uploadDir = Paths.get("uploads/img");
 
@@ -90,7 +88,7 @@ public class FileController {
 
 			Files.write(filepath, file.getBytes());
 
-			ImgFile _file = new ImgFile(file.getOriginalFilename());
+			ImageFile _file = new ImageFile(file.getOriginalFilename());
 			s.updateFile(_file);
 
 			return new ResponseEntity<>(_file, HttpStatus.OK);
@@ -111,12 +109,11 @@ public class FileController {
 	}
 
 	@PutMapping("/{id}")
-	ResponseEntity<? super FileEntity> putFileById(@PathVariable("id") long id, @RequestBody <? extends FileEntity> file) {
-		Optional<?> optFile = s.getFileById(id);
-
+	ResponseEntity<FileEntity> putFileById(@PathVariable("id") long id, @RequestBody SoundFile file) {
+		Optional<SoundFile> optFile = s.getAudioFileById(id);
 		if(optFile.isPresent()) {
 			SoundFile _file = optFile.get();
-			_file.setName(file.getName());
+			_file.setFilename(file.getFilename());
 
 			return new ResponseEntity<>(s.updateFile(_file), HttpStatus.OK);
 		} else {
@@ -136,7 +133,7 @@ public class FileController {
 
 	@DeleteMapping("/{id}")
 	ResponseEntity<SoundFile> deleteFile(@PathVariable("id") long id) {
-		Optional<SoundFile> optFile = s.getFileById(id);
+		Optional<SoundFile> optFile = s.getAudioFileById(id);
 
 		if(optFile.isPresent()) {
 		s.deleteFileById(id);

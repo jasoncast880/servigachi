@@ -19,4 +19,5 @@ public class ImageFile extends FileEntity{
 	public int getPPI() { return ppi; }
 	public void setPPI(int ppi) { this.ppi = ppi; }
 
+	public ImageFile(String filename) { super(filename);	}
 }

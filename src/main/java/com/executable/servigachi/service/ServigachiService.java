@@ -3,6 +3,8 @@ package com.executable.servigachi.service;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.stream.*;
+
 import org.springframework.stereotype.Service;
 
 import com.executable.servigachi.model.*;
@@ -36,5 +38,60 @@ public class ServigachiService {
 
 	public void deleteFileList() {
 		repo.deleteAll();
+	}
+
+	//AUDIO
+	public Optional<SoundFile> getAudioFileById(Long id) {
+		Optional<SoundFile> _file =  repo.findAll().stream()
+			.filter(f -> f instanceof SoundFile)
+			.map(f -> (SoundFile) f)
+			.filter(a -> a.getId().equals(id))
+			.findFirst();
+		return _file;
+	}
+
+	public Optional<SoundFile> getAudioFileByName(String filename) {
+		Optional<SoundFile> _file =  repo.findAll().stream()
+			.filter(f -> f instanceof SoundFile)
+			.map(f -> (SoundFile) f)
+			.filter(a -> a.getFilename().equals(filename))
+			.findFirst();
+		return _file;
+	}
+
+	public List<SoundFile> getAudioFileList() {
+		List<SoundFile> _fileList = repo.findAll().stream()
+			.filter(f -> f instanceof SoundFile)
+			.map(f -> (SoundFile) f)
+			.toList();
+		return _fileList;
+	}
+
+	//IMAGE 
+	//There should be a way to make get by id, name generic based on polymorphism??
+	public Optional<ImageFile> getImageFileById(Long id) {
+		Optional<ImageFile> _file =  repo.findAll().stream()
+			.filter(f -> f instanceof ImageFile)
+			.map(f -> (ImageFile) f)
+			.filter(a -> a.getId().equals(id))
+			.findFirst();
+		return _file;
+	}
+
+	public Optional<ImageFile> getImageFileByName(String filename) {
+		Optional<ImageFile> _file =  repo.findAll().stream()
+			.filter(f -> f instanceof ImageFile)
+			.map(f -> (ImageFile) f)
+			.filter(a -> a.getFilename().equals(filename))
+			.findFirst();
+		return _file;
+	}
+
+	public List<ImageFile> getImageFileList() {
+		List<ImageFile> _fileList = repo.findAll().stream()
+			.filter(f -> f instanceof ImageFile)
+			.map(f -> (ImageFile) f)
+			.toList();
+		return _fileList;
 	}
 }

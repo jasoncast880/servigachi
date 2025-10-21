@@ -23,4 +23,6 @@ public class SoundFile extends FileEntity{
 	private String title, artist, album, genre, date;
 	private int track;
 	private Optional<String> albumArt_Path; //idk
+
+	public SoundFile(String filename) { super(filename); }
 }
