@@ -10,7 +10,7 @@ uploadBtn.addEventListener("click", async()=> {
 	const formData = new FormData();
 	formData.append('file',file);
 
-	const resp = await fetch('/api/upload', {
+	const resp = await fetch('/api/upload/audio', {
 		method: 'POST',
 		body: formData,
 	});
@@ -57,5 +57,3 @@ dropDownBtn.addEventListener("click",async()=> {
 		isOpen = false;
 	}
 });
-
-

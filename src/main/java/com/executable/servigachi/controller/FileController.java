@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.executable.servigachi.model.SoundFile;
+import com.executable.servigachi.model.*;
 
 import com.executable.servigachi.service.ServigachiService;
 
@@ -38,9 +38,9 @@ public class FileController {
 	}
 
 	@GetMapping("/")
-	ResponseEntity<List<SoundFile>> getFileList() {
+	ResponseEntity<List<FileEntity>> getFileList() {
 		try {
-			List<SoundFile> fileList = s.getFileList();
+			List<FileEntity> fileList = s.getFileList();
 			if(fileList.isEmpty()) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -51,8 +51,8 @@ public class FileController {
 	}
 
 	@GetMapping("/{id}")
-	ResponseEntity<SoundFile> getFileById(@PathVariable("id") long id) {
-		Optional<SoundFile> optFile = s.getFileById(id);
+	ResponseEntity<? super FileEntity> getFileById(@PathVariable("id") long id) {
+		Optional<? super FileEntity> optFile = s.getFileById(id);
 
 		if(optFile.isPresent()) {
 			return new ResponseEntity<>(optFile.get(), HttpStatus.OK);
@@ -61,11 +61,11 @@ public class FileController {
 		}
 	}
 
-	@PostMapping("/upload")
-	ResponseEntity<SoundFile> uploadFile(@RequestParam("file") MultipartFile file) {
+	@PostMapping("/upload/audio")
+	ResponseEntity<SoundFile> uploadSoundFile(@RequestParam("file") MultipartFile file) {
 		try {
 			//upload on disk
-			Path uploadDir = Paths.get("uploads");
+			Path uploadDir = Paths.get("uploads/audio");
 
 			Path filepath = uploadDir.resolve(file.getOriginalFilename());
 			
@@ -81,10 +81,29 @@ public class FileController {
 		}
 	}
 
-	@PostMapping("/")
-	ResponseEntity<SoundFile> postFile(@RequestBody SoundFile file) {
+	@PostMapping("/upload/img")
+	ResponseEntity<ImgFile> uploadImgFile(@RequestParam("file") MultipartFile file) {
 		try {
-			SoundFile _file = s.updateFile(file);
+			Path uploadDir = Paths.get("uploads/img");
+
+			Path filepath = uploadDir.resolve(file.getOriginalFilename());
+
+			Files.write(filepath, file.getBytes());
+
+			ImgFile _file = new ImgFile(file.getOriginalFilename());
+			s.updateFile(_file);
+
+			return new ResponseEntity<>(_file, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+
+	@PostMapping("/")
+	ResponseEntity<? extends FileEntity> postFile(@RequestBody SoundFile file) {
+		try {
+			FileEntity _file = s.updateFile(file);
 			return new ResponseEntity<>(_file, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -92,8 +111,8 @@ public class FileController {
 	}
 
 	@PutMapping("/{id}")
-	ResponseEntity<SoundFile> putFileById(@PathVariable("id") long id, @RequestBody SoundFile file) {
-		Optional<SoundFile> optFile = s.getFileById(id);
+	ResponseEntity<? super FileEntity> putFileById(@PathVariable("id") long id, @RequestBody <? extends FileEntity> file) {
+		Optional<?> optFile = s.getFileById(id);
 
 		if(optFile.isPresent()) {
 			SoundFile _file = optFile.get();
@@ -127,4 +146,3 @@ public class FileController {
 		}
 	}
 }
-
