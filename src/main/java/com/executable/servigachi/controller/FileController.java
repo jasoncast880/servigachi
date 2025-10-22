@@ -97,7 +97,6 @@ public class FileController {
 		}
 	}
 
-
 	@PostMapping("/")
 	ResponseEntity<? extends FileEntity> postFile(@RequestBody SoundFile file) {
 		try {
@@ -136,7 +135,7 @@ public class FileController {
 		Optional<SoundFile> optFile = s.getAudioFileById(id);
 
 		if(optFile.isPresent()) {
-		s.deleteFileById(id);
+			s.deleteFileById(id);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

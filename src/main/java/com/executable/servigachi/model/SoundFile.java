@@ -1,7 +1,5 @@
 package com.executable.servigachi.model;
 
-import java.util.Optional;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +20,7 @@ public class SoundFile extends FileEntity{
 	//metadatas
 	private String title, artist, album, genre, date;
 	private int track;
-	private Optional<String> albumArt_Path; //idk
+	private String albumArt_Path; //idk
 
 	public SoundFile(String filename) { super(filename); }
 }
