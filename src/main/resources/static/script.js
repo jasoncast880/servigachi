@@ -19,8 +19,6 @@ uploadBtn.addEventListener("click", async()=> {
 	console.log(result);
 });
 
-//
-
 const dropDownBtn = document.getElementById("dropdownBtn")
 const dropDownContent = document.getElementById("dropdownContent")
 

@@ -35,22 +35,26 @@ public class FileController {
 		this.s = s;
 	}
 
-	@GetMapping("/")
+	@GetMapping("/files")
 	ResponseEntity<List<FileEntity>> getFileList() {
 		try {
 			List<FileEntity> fileList = s.getFileList();
 			if(fileList.isEmpty()) {
+				System.out.println("No Files found");
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
+			System.out.println("Files found: " + fileList.size());
+			fileList.forEach( f ->
+					System.out.println(f.getClass().getSimpleName()));
 			return new ResponseEntity<>(fileList, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	@GetMapping("/{id}")
-	ResponseEntity<? super FileEntity> getFileById(@PathVariable("id") long id) {
-		Optional<? super FileEntity> optFile = s.getFileById(id);
+	@GetMapping("/files/{id}")
+	ResponseEntity<FileEntity> getFileById(@PathVariable("id") long id) {
+		Optional<FileEntity> optFile = s.getFileById(id);
 
 		if(optFile.isPresent()) {
 			return new ResponseEntity<>(optFile.get(), HttpStatus.OK);
@@ -69,8 +73,9 @@ public class FileController {
 			
 			Files.write(filepath, file.getBytes());
 			
-			//metadata on db
 			SoundFile _file = new SoundFile(file.getOriginalFilename());
+			//todo: extract the metadata from he file; what is bitrate, compression, etc
+
 			s.updateFile(_file);
 
 			return new ResponseEntity<>(_file, HttpStatus.OK);
@@ -89,6 +94,8 @@ public class FileController {
 			Files.write(filepath, file.getBytes());
 
 			ImageFile _file = new ImageFile(file.getOriginalFilename());
+			//todo: extract the metadata from he file; what is the resolution, the ppi
+
 			s.updateFile(_file);
 
 			return new ResponseEntity<>(_file, HttpStatus.OK);
@@ -97,17 +104,7 @@ public class FileController {
 		}
 	}
 
-	@PostMapping("/")
-	ResponseEntity<? extends FileEntity> postFile(@RequestBody SoundFile file) {
-		try {
-			FileEntity _file = s.updateFile(file);
-			return new ResponseEntity<>(_file, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@PutMapping("/{id}")
+	@PutMapping("/files/{id}")
 	ResponseEntity<FileEntity> putFileById(@PathVariable("id") long id, @RequestBody SoundFile file) {
 		Optional<SoundFile> optFile = s.getAudioFileById(id);
 		if(optFile.isPresent()) {
@@ -120,7 +117,7 @@ public class FileController {
 		}
 	}
 	
-	@DeleteMapping("/")
+	@DeleteMapping("/files/")
 	ResponseEntity<SoundFile> deleteFileList() {
 		try {
 			s.deleteFileList();
@@ -130,7 +127,7 @@ public class FileController {
 		}
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/files/{id}")
 	ResponseEntity<SoundFile> deleteFile(@PathVariable("id") long id) {
 		Optional<SoundFile> optFile = s.getAudioFileById(id);
 
