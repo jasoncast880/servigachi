@@ -1,3 +1,4 @@
+//upload portion
 const uploadArea = document.getElementById("uploadArea")
 const fileUploadInput = document.getElementById("fileInput")
 const uploadBtn = document.getElementById("confirmUpload")
@@ -10,6 +11,7 @@ uploadBtn.addEventListener("click", async()=> {
 	const formData = new FormData();
 	formData.append('file',file);
 
+	//TODO !!!! discern filetype for endpoint mux, optionally add in md. annotations here
 	const resp = await fetch('/api/upload/audio', {
 		method: 'POST',
 		body: formData,
@@ -19,6 +21,7 @@ uploadBtn.addEventListener("click", async()=> {
 	console.log(result);
 });
 
+// dropdown view db portion
 const dropDownBtn = document.getElementById("dropdownBtn")
 const dropDownContent = document.getElementById("dropdownContent")
 
@@ -27,7 +30,7 @@ let isOpen = false;
 // Toggle dd vis when button is clicked
 dropDownBtn.addEventListener("click",async()=> {
 	if(!isOpen) {
-		const res = await fetch("/api/");
+		const res = await fetch("/api/files");
 		const files = await res.json();
 
 		//manipulate the innerHTML to reflect the db
@@ -37,11 +40,11 @@ dropDownBtn.addEventListener("click",async()=> {
 		//populate with names from db
 		files.forEach(file=> {
 			const item = document.createElement("div");
-			item.textContent = file.name;
+			item.textContent = file.filename;
 
 			//on click close menu and show selection
 			item.addEventListener("click",async()=> {
-				dropDownBtn.textContent = file.name + " ▼";
+				dropDownBtn.textContent = file.filename + " ▼";
 				dropDownContent.style.display = "none";
 				isOpen = false;
 			});
@@ -55,3 +58,6 @@ dropDownBtn.addEventListener("click",async()=> {
 		isOpen = false;
 	}
 });
+
+//view panel
+const viewPanel = document.getElementById("playbackArea")
